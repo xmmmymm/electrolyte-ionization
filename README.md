@@ -13,6 +13,7 @@
   <a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="Three.js r128" src="https://img.shields.io/badge/Three.js-r128-black.svg">
   <img alt="Offline ready" src="https://img.shields.io/badge/offline-ready-success.svg">
+  <a href="https://github.com/xmmmymm/electrolyte-ionization/actions/workflows/pages.yml"><img alt="Deploy Pages" src="https://github.com/xmmmymm/electrolyte-ionization/actions/workflows/pages.yml/badge.svg"></a>
 </p>
 
 ## 在线预览
@@ -128,9 +129,11 @@ HCl 写 H⁺ 不写 H₃O⁺；蔗糖不表现氢键；示意比例有角标提�
 
 ## 自动部署（GitHub Pages）
 
-仓库已包含 `.github/workflows/pages.yml`：向 `main` 分支推送后会自动把整站发布到 GitHub Pages。
+仓库**已启用** GitHub Pages（Source = `GitHub Actions`），并包含 `.github/workflows/pages.yml`：
+向 `main` 分支推送后会自动把整站发布到 **https://xmmmymm.github.io/electrolyte-ionization/**。
 
-首次启用需要在仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。
+> 如果你是 Fork 或复制本仓库：需先在 **Settings → Pages → Build and deployment → Source**
+> 选择 **GitHub Actions**，之后的推送才会触发部署。
 
 ## 第三方资源与许可
 
