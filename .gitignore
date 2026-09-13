@@ -1,0 +1,40 @@
+# ---- 操作系统 ----
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# ---- 编辑器 / IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.code-workspace
+
+# ---- AI / 编辑器本地配置（不上传到公开仓库）----
+.codebuddy/
+
+# ---- 内部开发文档（仅本地保留，不上传）----
+/开发指引.md
+/电解质的电离 开发需求.md
+
+# ---- 临时文件 ----
+*.tmp
+*.temp
+*.bak
+*.log
+~$*
+*_备份.*
+*_副本.*
+
+# ---- 依赖与构建产物（本项目纯静态，无需构建）----
+node_modules/
+dist/
+build/
+.cache/
+.env
+.env.local

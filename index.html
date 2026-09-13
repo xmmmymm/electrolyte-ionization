@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电解质的电离 —— 交互式微观演示</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ====== 顶部导航 ====== -->
+<header id="topbar">
+  <div class="brand">
+    <span class="brand-title">电解质的电离</span>
+    <span class="brand-sub">人教版 · 必修第一册 · 微观交互演示</span>
+  </div>
+  <nav class="topnav">
+    <button id="btn-reset" class="btn top-btn" title="恢复默认启动状态">↺ 重置</button>
+    <button id="btn-compare" class="btn top-btn" title="查看五种状态导电性对比">⊞ 对比模式</button>
+    <button id="btn-export" class="btn top-btn" title="导出对比卡片+方程式 PNG">⬇ 导出图片</button>
+    <button id="btn-help" class="btn top-btn" title="操作说明/概念定义/教师备注">? 帮助</button>
+  </nav>
+</header>
+
+<!-- ====== 主体：左 3D / 右 2D ====== -->
+<main id="layout">
+
+  <!-- 左：3D 场景 -->
+  <section id="stage-wrap">
+    <div id="webgl-tip" class="hidden"></div>
+    <canvas id="stage3d"></canvas>
+
+    <!-- 比例角标（示意模式时显示） -->
+    <div id="scale-badge" class="scale-badge">当前为教学示意比例</div>
+
+    <!-- 场景名称 -->
+    <div id="scene-name" class="scene-name">固态 NaCl（未加水）</div>
+
+    <!-- 阶段进度指示 -->
+    <div id="stage-indicator" class="stage-indicator"></div>
+
+    <!-- 电离方程式（展示区中上） -->
+    <div id="eq-overlay" class="eq-overlay">NaCl === Na⁺ + Cl⁻</div>
+
+    <!-- 原子图示（展示区右下） -->
+    <div id="legend" class="legend"></div>
+
+    <!-- WebGL 降级 2D 简版示意 -->
+    <div id="fallback-2d" class="fallback-2d hidden">
+      <div class="fb-title">当前浏览器不支持 WebGL，已切换为 2D 静态示意</div>
+      <canvas id="fb-canvas" width="640" height="460"></canvas>
+      <div class="fb-note">建议使用新版 Edge 或 Chrome 浏览器以获得 3D 交互体验</div>
+    </div>
+
+    <!-- 对比模式浮层 -->
+    <div id="compare-overlay" class="compare-overlay hidden">
+      <div class="compare-head">
+        <h2>导电性对比 · 宏观—微观—符号</h2>
+        <button id="btn-compare-close" class="btn small-btn">✕ 关闭</button>
+      </div>
+      <div id="compare-grid" class="compare-grid"><!-- 卡片由 JS 生成 --></div>
+      <p class="compare-foot">点击卡片可进入对应 3D 场景；结论均以"是否存在自由移动的离子"为判据。</p>
+    </div>
+  </section>
+
+  <!-- 右：2D 控制面板 -->
+  <aside id="panel">
+
+    <!-- 1. 预设切换 -->
+    <div class="panel-block" id="preset-block">
+      <h3 class="block-title">预设实验</h3>
+      <div id="preset-btns" class="preset-btns"><!-- JS 生成 --></div>
+      <button id="btn-show-hcl" class="btn ghost-btn full-btn">＋ 显示可选案例：HCl</button>
+    </div>
+
+    <!-- 2. 宏观电路与导电性结论 -->
+    <div class="panel-block">
+      <h3 class="block-title">宏观电路 · 导电性</h3>
+      <div id="circuit-wrap">
+        <canvas id="circuit-canvas" width="340" height="150"></canvas>
+      </div>
+      <div id="conduct-result" class="conduct-result">
+        <span id="conduct-icon" class="conduct-icon off">●</span>
+        <span id="conduct-text" class="conduct-text off">不导电（灯泡灭）</span>
+      </div>
+      <div id="conduct-reason" class="conduct-reason">有离子，但被束缚在晶格中，不能自由移动 → 不导电</div>
+    </div>
+
+    <!-- 3. 交互控制区 -->
+    <div class="panel-block" id="control-block">
+      <h3 class="block-title">实验操作</h3>
+
+      <!-- 手动步骤按钮 -->
+      <div id="manual-btns" class="manual-btns">
+        <button id="btn-addwater" class="btn action-btn">💧 加水</button>
+        <button id="btn-stir" class="btn action-btn" disabled>🌀 搅拌</button>
+        <button id="btn-heat" class="btn action-btn" disabled>🔥 加热</button>
+      </div>
+
+      <!-- 熔融温度滑块 -->
+      <div id="temp-ctrl" class="temp-ctrl hidden">
+        <label for="temp-slider">温度：<span id="temp-value">25</span> ℃（熔点 801 ℃）</label>
+        <input type="range" id="temp-slider" min="0" max="1000" value="25" step="1">
+        <div class="temp-marks"><span>0</span><span>200</span><span>400</span><span>600</span><span>801</span><span>1000</span></div>
+      </div>
+
+      <!-- 播放控制 -->
+      <div class="play-ctrl">
+        <button id="btn-play" class="btn play-btn" title="自动播放">▶ 播放</button>
+        <button id="btn-step" class="btn play-btn" title="单步到下一阶段">⏭ 单步</button>
+        <div class="speed-group">
+          <span class="speed-label">速度</span>
+          <button class="btn speed-btn" data-speed="0.5">0.5×</button>
+          <button class="btn speed-btn active" data-speed="1">1×</button>
+          <button class="btn speed-btn" data-speed="2">2×</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 辅助开关 -->
+    <div class="panel-block">
+      <h3 class="block-title">辅助选项</h3>
+      <label class="switch-row"><input type="checkbox" id="chk-lattice"><span>查看晶格内部结构（半透明拆解）</span></label>
+      <label class="switch-row"><input type="checkbox" id="chk-realscale"><span>真实半径比例（102 : 181 pm）</span></label>
+      <label class="switch-row"><input type="checkbox" id="chk-reduce"><span>减少动画（低配电脑 / 投影优化）</span></label>
+    </div>
+
+    <!-- 5. 数值面板 -->
+    <div class="panel-block">
+      <h3 class="block-title">数值面板</h3>
+      <div id="num-panel" class="num-panel"></div>
+    </div>
+
+  </aside>
+</main>
+
+<!-- ====== 帮助页浮层 ====== -->
+<div id="help-overlay" class="help-overlay hidden">
+  <div class="help-box">
+    <div class="help-head">
+      <h2>帮助</h2>
+      <button id="btn-help-close" class="btn small-btn">✕ 关闭</button>
+    </div>
+    <div class="help-tabs">
+      <button class="help-tab active" data-tab="tab1">操作说明</button>
+      <button class="help-tab" data-tab="tab2">概念定义</button>
+      <button class="help-tab" data-tab="tab3">教师备注</button>
+    </div>
+    <div class="help-body">
+      <div id="help-tab1" class="help-pane active"></div>
+      <div id="help-tab2" class="help-pane"></div>
+      <div id="help-tab3" class="help-pane"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 导出用隐藏 canvas -->
+<canvas id="export-canvas" class="hidden"></canvas>
+
+<!-- 传统 script 标签，非 ES Module -->
+<script src="vendor/three.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
