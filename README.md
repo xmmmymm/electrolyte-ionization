@@ -143,6 +143,19 @@ HCl 写 H⁺ 不写 H₃O⁺；蔗糖不表现氢键；示意比例有角标提�
 
 本项目自身代码以 [MIT 协议](LICENSE) 开源。Three.js 遵循其原始 MIT 协议，版权归原作者所有。
 
+## 配套项目
+
+本项目聚焦**强电解质的状态与过程**（固态为何不导电、溶解/熔融后为何导电）。
+若要讲**弱电解质的电离平衡**——动态平衡、电离度 α、Ka/pH、越稀越电离——请配合：
+
+| 项目 | 解决什么 | 形态 |
+|---|---|---|
+| [IonViz-Simulation](https://github.com/xmmmymm/IonViz-Simulation) | 弱电解质电离平衡的粒子级实时模拟：正逆速率双柱、温度联动 Ka、浓度联动 α、HCl 与 CH₃COOH 并排对比、氨水弱碱 | Canvas 2D，需 `npm install`；有 Windows 安装包；[在线](https://xmmmymm.github.io/IonViz-Simulation/) |
+
+两者知识点互补、互不替代：先讲 NaCl「能否电离」，再讲 CH₃COOH「电离到什么程度」，是一条自然的教学线。
+
+全部项目见索引：**[chem-edu-index](https://github.com/xmmmymm/chem-edu-index)**
+
 ## 致谢
 
 - 教材依据：人教版《普通高中教科书·化学·必修第一册》第一章第二节
